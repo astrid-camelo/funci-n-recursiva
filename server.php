@@ -97,37 +97,26 @@
     public function getProduct(){
         $query = "SELECT * FROM producto";
         $result = mysqli_query($this->db, $query);
-        while($row = mysqli_fetch_assoc ($result))
+        while($row = mysqli_fetch_assoc($result))
         {
             return $row['nombre'];
         }
 
         $result->close();
     }
-    public function validarUsuario($nombre, $clave)
+    public function validarUsuario($usuario, $clave)
     {
-        // Comprobamos que la conexión a la base de datos se haya realizado correctamente
         if (!$this->db) {
             return "Error de conexión a la base de datos. Intenta más tarde.";
         }
-
-        // Preparamos la consulta SQL para buscar el usuario y clave
-        $query = "SELECT * FROM usuarios WHERE nombre = ? AND clave = ?";
+        $query = "SELECT * FROM usuarios WHERE usuario = ? AND clave = ?";
         $stmt = $this->db->prepare($query);
-
-        // Verificamos si hubo un error al preparar la consulta
         if ($stmt === false) {
             return "Error al preparar la consulta SQL: " . $this->db->error;
         }
-
-        // Vinculamos los parámetros
-        $stmt->bind_param("ss", $nombre, $clave);
-
-        // Ejecutamos la consulta
+        $stmt->bind_param("ss", $usuario, $clave);
         $stmt->execute();
         $result = $stmt->get_result();
-
-        // Si el resultado tiene filas, es porque el usuario y la clave coinciden
         if ($result->num_rows > 0) {
             return "Los datos ingresados son válidos.";
         } else {
